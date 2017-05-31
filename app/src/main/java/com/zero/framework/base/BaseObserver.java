@@ -42,6 +42,11 @@ public class BaseObserver<T> implements Observer<ResponseBody> {
         finalNeedType = MethodHandler(types).get(0);
     }
 
+    /**
+     * 通过反射，拿到所需要的类型
+     * @param types
+     * @return
+     */
     private List<Type> MethodHandler(Type[] types) {
         List<Type> needTypes = new ArrayList<>();
 

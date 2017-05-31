@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * 数据请求中对cache进行管理
  * Created by Zero on 2017/5/30.
  */
 
