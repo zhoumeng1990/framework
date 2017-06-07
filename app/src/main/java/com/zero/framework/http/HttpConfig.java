@@ -8,8 +8,8 @@ public class HttpConfig {
 
     //服务器地址
     private static final boolean isDebug=true;
-    private static final String DEBUG_SERVER="https://xxx.com:61001/";
-    private static final String OFICAL_SERVER="http://xxx.com/";
+    private static final String DEBUG_SERVER="https://xxx.com:61001/v1/";
+    private static final String OFICAL_SERVER="http://xxx.com/interface.php?";
 
     public static String getServer()
     {

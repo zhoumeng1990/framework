@@ -17,13 +17,14 @@ import static okhttp3.internal.Util.trimSubstring;
 import static okhttp3.internal.platform.Platform.WARN;
 
 /**
+ * cookie持久化
  * Created by Zero on 2017/5/27.
  */
 
-public final class JavaNetCookie implements CookieJar {
+public final class JavaNetCookieJar implements CookieJar {
     private final CookieHandler cookieHandler;
 
-    public JavaNetCookie(CookieHandler cookieHandler) {
+    public JavaNetCookieJar(CookieHandler cookieHandler) {
         this.cookieHandler = cookieHandler;
     }
 

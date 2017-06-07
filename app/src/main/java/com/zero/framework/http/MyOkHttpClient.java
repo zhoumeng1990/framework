@@ -1,7 +1,7 @@
 package com.zero.framework.http;
 
 import com.zero.framework.BuildConfig;
-import com.zero.framework.cookie.JavaNetCookie;
+import com.zero.framework.cookie.JavaNetCookieJar;
 import com.zero.framework.interceptor.HeaderInterceptor;
 import com.zero.framework.interceptor.LogInterceptor;
 
@@ -12,6 +12,7 @@ import okhttp3.OkHttpClient;
 
 
 /**
+ * OkHttpClient配置
  * Created by Zero on 2017/5/25.
  */
 
@@ -28,9 +29,15 @@ public class MyOkHttpClient {
 
                     OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder();
                     CookieManager cookieManager = new CookieManager(null, CookiePolicy.ACCEPT_ORIGINAL_SERVER);
-                    okHttpClientBuilder.cookieJar(new JavaNetCookie(cookieManager));
+                    /**
+                     * 设置cookie持久化
+                     */
+                    okHttpClientBuilder.cookieJar(new JavaNetCookieJar(cookieManager));
 
                     if (BuildConfig.DEBUG) {
+                        /**
+                         * debug模式下打印json
+                         */
                         LogInterceptor logging = new LogInterceptor();
                         okHttpClientBuilder.addInterceptor(logging);
                     }
