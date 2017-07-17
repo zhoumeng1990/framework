@@ -102,8 +102,22 @@ public class RequestUtil {
                 postDispose(url, map, iResponse, cacheMap);
             }
         } else {
-            getObservable((Observable<ResponseBody>) data.getObject(), iResponse, null);
+            Map cacheMap = new HashMap();
+            cacheMap.put("cacheKey", cacheKey);
+            cacheMap.put("period", period);
+            if (isGet) {
+                getDispose(url, map, iResponse, cacheMap);
+            }else{
+                postDispose(url, map, iResponse, cacheMap);
+            }
         }
+    }
+
+    /**
+     * get方式请求，需要做本地cache，不设置缓存类型，默认-1（长久缓存）
+     */
+    public static <T> void getDisposeWithCache(String url, Map map, final IResponse<T> iResponse) {
+        getDisposeWithCache(url,map,iResponse,-1);
     }
 
     /**
@@ -111,6 +125,13 @@ public class RequestUtil {
      */
     public static <T> void getDisposeWithCache(String url, Map map, final IResponse<T> iResponse, int period) {
         cacheData(url,map,iResponse,period,true);
+    }
+
+    /**
+     * post方式请求，需要做本地cache，不设置缓存类型，默认-1（长久缓存）
+     */
+    public static <T> void postDisposeWithCache(String url, Map map, final IResponse<T> iResponse) {
+        postDisposeWithCache(url,map,iResponse,-1);
     }
 
     /**

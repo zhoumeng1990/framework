@@ -1,6 +1,8 @@
 package com.zero.framework.cache;
 
 /**
+ * 配置过期类型和时间
+ *
  * Created by Zero on 2017/5/30.
  */
 

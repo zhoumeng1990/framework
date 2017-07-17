@@ -6,12 +6,10 @@ import com.zero.framework.exception.APIException;
 import com.zero.framework.exception.RequestExpiredException;
 import com.zero.framework.exception.UnLoginException;
 import com.zero.framework.interfaces.IResponse;
+import com.zero.framework.utils.ReflectUtil;
 
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -34,38 +32,41 @@ public class BaseObserver<T> implements Observer<ResponseBody> {
         this.iResponse = iResponse;
         mGson = new Gson();
 
+        /**
+         * 通过反射，拿到类中所有的Interface
+         */
         final Type[] types = iResponse.getClass().getGenericInterfaces();
 
-        if (MethodHandler(types) == null || MethodHandler(types).size() == 0) {
+        if (ReflectUtil.MethodHandler(types) == null || ReflectUtil.MethodHandler(types).size() == 0) {
 
         }
-        finalNeedType = MethodHandler(types).get(0);
+        finalNeedType = ReflectUtil.MethodHandler(types).get(0);
     }
 
-    /**
-     * 通过反射，拿到所需要的类型
-     * @param types
-     * @return
-     */
-    private List<Type> MethodHandler(Type[] types) {
-        List<Type> needTypes = new ArrayList<>();
-
-        for (Type paramType : types) {
-            if (paramType instanceof ParameterizedType) {
-                Type[] parenTypes = ((ParameterizedType) paramType).getActualTypeArguments();
-                for (Type childType : parenTypes) {
-                    needTypes.add(childType);
-                    if (childType instanceof ParameterizedType) {
-                        Type[] childTypes = ((ParameterizedType) childType).getActualTypeArguments();
-                        for (Type type : childTypes) {
-                            needTypes.add(type);
-                        }
-                    }
-                }
-            }
-        }
-        return needTypes;
-    }
+//    /**
+//     * 通过反射，拿到所需要的类型
+//     * @param types
+//     * @return
+//     */
+//    private List<Type> MethodHandler(Type[] types) {
+//        List<Type> needTypes = new ArrayList<>();
+//
+//        for (Type paramType : types) {
+//            if (paramType instanceof ParameterizedType) {
+//                Type[] parenTypes = ((ParameterizedType) paramType).getActualTypeArguments();
+//                for (Type childType : parenTypes) {
+//                    needTypes.add(childType);
+//                    if (childType instanceof ParameterizedType) {
+//                        Type[] childTypes = ((ParameterizedType) childType).getActualTypeArguments();
+//                        for (Type type : childTypes) {
+//                            needTypes.add(type);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        return needTypes;
+//    }
 
     @Override
     public void onSubscribe(Disposable d) {

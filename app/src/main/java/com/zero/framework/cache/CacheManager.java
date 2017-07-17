@@ -14,6 +14,7 @@ public class CacheManager {
 
     /**
      * 添加到cache
+     *
      * @param key
      * @param data
      * @param period
@@ -21,21 +22,38 @@ public class CacheManager {
     public static void addData(String key, Object data, int period) {
         CacheObject cacheObject = getData(key);
         if (cacheObject != null) {
-            cacheObject.setPeriod(period);
+            /**
+             * 如果类型不同，便重新加入到缓存中
+             */
+            if (period != cacheObject.getPeriod()) {
+                cacheObject.setPeriod(period);
+                /**
+                 * 移除老的value
+                 */
+                removeInvalidData(key);
+                /**
+                 * 重新putvalue
+                 */
+                cacheMap.put(key, cacheObject);
+            }
         } else {
             cacheObject = new CacheObject(data, period);
+            cacheMap.put(key, cacheObject);
         }
-        cacheMap.put(key, cacheObject);
     }
 
     /**
      * 获取cache
+     *
      * @param key
      * @return
      */
     public static CacheObject getData(String key) {
         CacheObject cacheObject = cacheMap.get(key);
         if (cacheObject != null) {
+            /**
+             * 判断缓存是否过期
+             */
             if (cacheObject.isValid()) {
                 return cacheObject;
             } else {
@@ -47,10 +65,11 @@ public class CacheManager {
 
     /**
      * 移除过期的key
+     *
      * @param key
      */
-    public static void removeInvalidData(String key){
-        if(cacheMap.containsKey(key)){
+    public static void removeInvalidData(String key) {
+        if (cacheMap.containsKey(key)) {
             cacheMap.remove(key);
         }
     }
