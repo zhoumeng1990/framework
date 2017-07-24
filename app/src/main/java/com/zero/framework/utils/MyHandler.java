@@ -15,7 +15,7 @@ public class MyHandler extends Handler {
     private final WeakReference<BaseActivity> mActivity;
 
     /**
-     * 因为内部类会隐式强引用当前类，采用弱引用，避免长生命周期导致内存泄漏
+     * 从BaseActivity中提取出来，原来是因为内部类会隐式强引用当前类，采用弱引用，避免长生命周期导致内存泄漏
      *
      * @param activity
      */
