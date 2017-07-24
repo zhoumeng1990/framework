@@ -28,11 +28,6 @@ public class MyOkHttpClient {
                 if (singleton == null) {
 
                     OkHttpClient.Builder okHttpClientBuilder = new OkHttpClient.Builder();
-                    CookieManager cookieManager = new CookieManager(null, CookiePolicy.ACCEPT_ORIGINAL_SERVER);
-                    /**
-                     * 设置cookie持久化
-                     */
-                    okHttpClientBuilder.cookieJar(new JavaNetCookieJar(cookieManager));
 
                     if (BuildConfig.DEBUG) {
                         /**
@@ -43,6 +38,11 @@ public class MyOkHttpClient {
                     }
 
                     okHttpClientBuilder.addInterceptor(new HeaderInterceptor());
+                    CookieManager cookieManager = new CookieManager(null, CookiePolicy.ACCEPT_ORIGINAL_SERVER);
+                    /**
+                     * 设置cookie持久化
+                     */
+                    okHttpClientBuilder.cookieJar(new JavaNetCookieJar(cookieManager));
                     singleton = okHttpClientBuilder.build();
                 }
             }

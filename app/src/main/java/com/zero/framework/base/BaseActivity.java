@@ -21,9 +21,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.zero.framework.R;
+import com.zero.framework.utils.MyHandler;
 import com.zero.framework.view.LoadingDialogFragment;
-
-import java.lang.ref.WeakReference;
 
 import butterknife.ButterKnife;
 
@@ -37,29 +36,12 @@ public abstract class BaseActivity<Pre extends BasePresenter> extends AppCompatA
     private LoadingDialogFragment waitDialog = null;
 
     protected Pre presenter;
+    /**
+     * 原本是打算Handler用static内部类的，内部类里面的方法和字段都必须是static，此处会有很大问题，便改为外部类去解决内存泄漏的问题
+     */
     protected final Handler mHandler = new MyHandler(this);
     private BroadcastReceiver receiver;
     private IntentFilter filter;
-
-    private class MyHandler extends Handler {
-        private final WeakReference<BaseActivity> mActivity;
-
-        /**
-         * 因为内部类会隐式强引用当前类，采用弱引用，避免长生命周期导致内存泄漏
-         *
-         * @param activity
-         */
-        private MyHandler(BaseActivity activity) {
-            mActivity = new WeakReference<>(activity);
-        }
-
-        @Override
-        public void handleMessage(Message msg) {
-            if (mActivity.get() != null) {
-                requestOver(msg);
-            }
-        }
-    }
 
     @Override
     protected final void onCreate(Bundle savedInstanceState) {
@@ -191,7 +173,7 @@ public abstract class BaseActivity<Pre extends BasePresenter> extends AppCompatA
      *
      * @param msg
      */
-    protected void requestOver(Message msg) {
+    public void requestOver(Message msg) {
         if (presenter != null) {
             presenter.handMsg(msg);
         }
