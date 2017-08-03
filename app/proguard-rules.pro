@@ -23,8 +23,9 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
-
--keep public class * extends android.app.Fragment
+-dontwarn javax.annotation.Nullable
+-dontwarn javax.annotation.ParametersAreNonnullByDefault
+  -keep public class * extends android.app.Fragment
   -keep public class * extends android.app.Activity
   -keep public class * extends android.app.Application
   -keep public class * extends android.app.Service
@@ -73,6 +74,11 @@
     rx.internal.util.atomic.LinkedQueueNode consumerNode;
 }
 
+# Gson
+  -keep class sun.misc.Unsafe { *; }
+  -keep class com.google.gson.stream.** { *; }
+  -keep class com.google.gson.** { *; }
+
 # 代码混淆压缩比，在0~7之间，默认为5，一般不做修改
 -optimizationpasses 5
 
@@ -108,13 +114,13 @@
 # 保留R下面的资源
 -keep class **.R$* {*;}
 
-# keep annotated by NotProguard
--keep @com.zero.framework.annotation.NotProguard class * {*;}
+# keep annotated by KeepNotProguard
+-keep @com.zero.framework.annotation.KeepNotProguard class * {*;}
 -keep class * {
-    @com.zero.framework.annotation.NotProguard <fields>;
+    @com.zero.framework.annotation.KeepNotProguard <fields>;
 }
 -keepclassmembers class * {
-    @com.zero.framework.annotation.NotProguard <methods>;
+    @com.zero.framework.annotation.KeepNotProguard <methods>;
 }
 
 

@@ -24,6 +24,9 @@ import com.zero.framework.R;
 import com.zero.framework.utils.MyHandler;
 import com.zero.framework.view.LoadingDialogFragment;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import butterknife.ButterKnife;
 
 /**
@@ -40,6 +43,7 @@ public abstract class BaseActivity<Pre extends BasePresenter> extends AppCompatA
      * 原本是打算Handler用static内部类的，内部类里面的方法和字段都必须是static，此处会有很大问题，便改为外部类去解决内存泄漏的问题
      */
     protected final Handler mHandler = new MyHandler(this);
+    private Map<String, BroadcastReceiver> mapReceiver = new HashMap<>();
     private BroadcastReceiver receiver;
     private IntentFilter filter;
 
@@ -119,6 +123,7 @@ public abstract class BaseActivity<Pre extends BasePresenter> extends AppCompatA
         };
         LocalBroadcastManager.getInstance(this).registerReceiver(
                 receiver, filter);
+        mapReceiver.put(getClass().getSimpleName(), receiver);
     }
 
     /**
@@ -306,8 +311,8 @@ public abstract class BaseActivity<Pre extends BasePresenter> extends AppCompatA
          * 移除mHandler，避免因为移除mHandler超activity生命周期工作造成内存泄漏
          */
         mHandler.removeCallbacksAndMessages(null);
-        if (receiver != null) {
-            LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        if (mapReceiver != null && mapReceiver.size() > 0 && mapReceiver.get(getClass().getSimpleName()) != null) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(mapReceiver.get(getClass().getSimpleName()));
         }
     }
 }

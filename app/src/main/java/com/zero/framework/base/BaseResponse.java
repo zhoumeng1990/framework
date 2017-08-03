@@ -1,6 +1,6 @@
 package com.zero.framework.base;
 
-import com.zero.framework.annotation.NotProguard;
+import com.zero.framework.annotation.KeepNotProguard;
 
 import java.io.Serializable;
 
@@ -10,7 +10,7 @@ import java.io.Serializable;
  * 第二版才参与公司项目，这是之前搞Java的人来写的，所以依然存在get/set，如果没有特别需要，可以删掉get/set，字段用public即可
  * @param <T>
  */
-@NotProguard
+@KeepNotProguard
 public class BaseResponse<T> implements Serializable {
     private int code;
     private String message;
