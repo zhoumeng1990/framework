@@ -7,5 +7,5 @@ import com.zero.framework.base.BaseInterface;
  */
 
 public interface ITest extends BaseInterface {
-    void test();
+    void sendData(TestModel model);
 }

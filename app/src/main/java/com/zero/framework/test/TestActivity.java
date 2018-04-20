@@ -9,6 +9,8 @@ import com.zero.framework.R;
 import com.zero.framework.base.BaseActivity;
 import com.zero.framework.base.BaseInterface;
 
+import java.util.Map;
+
 import butterknife.BindView;
 
 /**
@@ -21,6 +23,7 @@ public class TestActivity extends BaseActivity<TestPresenter> implements ITest{
     TextView txtLogin;
     @BindView(R.id.img_header)
     ImageView imgHeader;
+    Map map;
 
     @Override
     protected int initLayout() {
@@ -71,7 +74,7 @@ public class TestActivity extends BaseActivity<TestPresenter> implements ITest{
     }
 
     @Override
-    public void test() {
-        Log.e(TAG, "test: ");
+    public void sendData(TestModel model) {
+        System.out.println(model.title);
     }
 }

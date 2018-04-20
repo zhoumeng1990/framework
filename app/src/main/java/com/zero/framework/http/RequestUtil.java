@@ -8,6 +8,7 @@ import com.zero.framework.cache.CacheManager;
 import com.zero.framework.cache.CacheObject;
 import com.zero.framework.interfaces.IResponse;
 
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -89,7 +90,7 @@ public class RequestUtil {
 
     /**************************************cache**************************************/
 
-    private static <T> void cacheData(String url, Map map, final IResponse<T> iResponse, int period,boolean isGet){
+    private static <T> void cacheData(String url, Map map, final IResponse<T> iResponse, int period, boolean isGet){
         String cacheKey = url + getCacheKey(map);
         CacheObject data = CacheManager.getData(cacheKey);
         if (data == null) {
@@ -156,5 +157,24 @@ public class RequestUtil {
             }
         }
         return sb.toString();
+    }
+
+
+    @Deprecated
+    private static <T> Observable<T> test(String url, Map map, Class<?> clazz, String methodName) {
+        Observable<T> tObservable = null;
+        try {
+            /**
+             * 第一个参数是反射的方法名，第二个参数是方法里面参数类型
+             */
+            Method post = clazz.getDeclaredMethod(methodName,new Class[]{String.class,Map.class});
+            if(post!=null){
+                tObservable =  (Observable<T>) post.invoke(RetrofitFactory.createRetrofitService(clazz),new Object[]{url,map});
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return tObservable;
+//        return RetrofitFactory.createRetrofitService(clazz);
     }
 }

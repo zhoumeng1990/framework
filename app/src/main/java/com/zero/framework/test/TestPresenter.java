@@ -7,6 +7,10 @@ import android.os.Message;
 
 import com.zero.framework.base.BaseInterface;
 import com.zero.framework.base.BasePresenter;
+import com.zero.framework.http.RequestUtil;
+import com.zero.framework.interfaces.IResponse;
+
+import java.util.HashMap;
 
 /**
  * Created by Zero on 2017/5/31.
@@ -15,11 +19,10 @@ import com.zero.framework.base.BasePresenter;
 public class TestPresenter extends BasePresenter {
 
     private ITest iView;
-    private int test = -1;
 
     @Override
     protected void initBaseData(Context context, Handler handler, BaseInterface iView, Intent intent) {
-        if (iView!=null) {
+        if (iView != null) {
             if (iView instanceof ITest) {
                 this.iView = (ITest) iView;
             }
@@ -31,11 +34,22 @@ public class TestPresenter extends BasePresenter {
 
     }
 
-    public void commit(){
+    public void commit() {
 
     }
 
     public void getCommit() {
+        RequestUtil.getDispose("top250", new HashMap(), new IResponse<TestModel>() {
 
+            @Override
+            public void onSuccess(TestModel baseModel) {
+                iView.sendData(baseModel);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                System.out.println(e.getMessage());
+            }
+        });
     }
 }

@@ -2,13 +2,15 @@ package com.zero.framework.base;
 
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
 import com.zero.framework.exception.APIException;
-import com.zero.framework.exception.RequestExpiredException;
-import com.zero.framework.exception.UnLoginException;
 import com.zero.framework.interfaces.IResponse;
 import com.zero.framework.utils.ReflectUtil;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import io.reactivex.Observer;
@@ -25,8 +27,6 @@ public class BaseObserver<T> implements Observer<ResponseBody> {
     private IResponse iResponse;
     private Gson mGson;
     private final Type finalNeedType;
-    private static final int UNLOGIN_EXCEPTION = 33333;
-    private static final int REQUEST_EXCEPTION = 1003;
 
     public BaseObserver(IResponse<T> iResponse) {
         this.iResponse = iResponse;
@@ -43,31 +43,6 @@ public class BaseObserver<T> implements Observer<ResponseBody> {
         finalNeedType = ReflectUtil.MethodHandler(types).get(0);
     }
 
-//    /**
-//     * 通过反射，拿到所需要的类型
-//     * @param types
-//     * @return
-//     */
-//    private List<Type> MethodHandler(Type[] types) {
-//        List<Type> needTypes = new ArrayList<>();
-//
-//        for (Type paramType : types) {
-//            if (paramType instanceof ParameterizedType) {
-//                Type[] parenTypes = ((ParameterizedType) paramType).getActualTypeArguments();
-//                for (Type childType : parenTypes) {
-//                    needTypes.add(childType);
-//                    if (childType instanceof ParameterizedType) {
-//                        Type[] childTypes = ((ParameterizedType) childType).getActualTypeArguments();
-//                        for (Type type : childTypes) {
-//                            needTypes.add(type);
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//        return needTypes;
-//    }
-
     @Override
     public void onSubscribe(Disposable d) {
 
@@ -81,20 +56,41 @@ public class BaseObserver<T> implements Observer<ResponseBody> {
              * responseBody.string()当前打断点，获取不到值，具体原因还未去查找，此处先用result接收
              */
             String result = responseBody.string();
-            BaseResponse httpResponse = mGson.fromJson(result,finalNeedType);
-            if (httpResponse.isSuccess()) {
-                iResponse.onSuccess(httpResponse);
-            } else {
-                if (httpResponse.getCode() == UNLOGIN_EXCEPTION) {
-                    iResponse.onError(new UnLoginException(httpResponse.getCode(), httpResponse.getMessage()));
-                } else if (httpResponse.getCode() == REQUEST_EXCEPTION) {
-                    iResponse.onError(new RequestExpiredException(httpResponse.getCode(), httpResponse.getMessage()));
+            BaseResponse httpResponse ;
+            if (finalNeedType instanceof ParameterizedType) {
+                //ParameterizedType参数化类型，即泛型
+                ParameterizedType p = (ParameterizedType) finalNeedType;
+                //getActualTypeArguments获取参数化类型的数组，泛型可能有多个
+                Class c = (Class) p.getActualTypeArguments()[0];
+                System.out.println(mGson.fromJson(result, c));
+                httpResponse = mGson.fromJson(result, finalNeedType);
+                isHaveBaseResponse(httpResponse);
+            }
+
+            if (finalNeedType instanceof Class) {
+                JsonObject o = new JsonParser().parse(result).getAsJsonObject();
+                if(o.get("code")==null){
+                    iResponse.onSuccess(mGson.fromJson(o, finalNeedType));
                 } else {
-                    iResponse.onError(new APIException(httpResponse.getCode(), httpResponse.getMessage()));
+                    int code = o.get("code").getAsInt();
+                    if (code == 0) {
+                        if (o.get("result")==null) {
+                            iResponse.onSuccess(mGson.fromJson(result, finalNeedType));
+                        }else {
+                            iResponse.onSuccess(finalNeedType != String.class ?
+                                    mGson.fromJson(o.get("result").getAsJsonObject(), finalNeedType) : o.get("result").toString());
+                        }
+                    } else {
+                        httpResponse = new BaseResponse();
+                        httpResponse.code = code;
+                        String msg = o.get("message").toString();
+                        httpResponse.msg = msg;
+                        isHaveBaseResponse(httpResponse);
+                    }
                 }
             }
-        } catch (IOException e) {
-            iResponse.onError(e);
+        } catch (IOException | JsonSyntaxException e) {
+            onError(e);
         }
     }
 
@@ -106,5 +102,13 @@ public class BaseObserver<T> implements Observer<ResponseBody> {
     @Override
     public void onComplete() {
 
+    }
+
+    private void isHaveBaseResponse(BaseResponse httpResponse) {
+        if (httpResponse.code == 0) {
+            iResponse.onSuccess(httpResponse);
+        } else {
+            iResponse.onError(new APIException(httpResponse.code, httpResponse.msg));
+        }
     }
 }
