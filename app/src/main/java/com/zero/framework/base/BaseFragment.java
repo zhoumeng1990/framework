@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import java.lang.ref.WeakReference;
 
 import butterknife.ButterKnife;
+import butterknife.Unbinder;
 
 /**
  * 很多注释写在了NewBaseActivity
@@ -29,6 +30,7 @@ public abstract class BaseFragment<Presenter extends BasePresenter> extends Frag
     protected WeakReference<Activity> weakActivity;
 
     protected final Handler mHandler = new MyHandler(mActivity);
+    protected Unbinder unbinder;
 
     private class MyHandler extends Handler {
 
@@ -66,7 +68,7 @@ public abstract class BaseFragment<Presenter extends BasePresenter> extends Frag
 
         if (initLayout() != 0) {
             rootView = inflater.inflate(initLayout(), container, false);
-            ButterKnife.bind(this,rootView);
+            unbinder = ButterKnife.bind(this,rootView);
         }else{
             throw new NullPointerException("未找到布局文件");
         }
@@ -133,5 +135,13 @@ public abstract class BaseFragment<Presenter extends BasePresenter> extends Frag
     public void onClick(View view) {
         // TODO Auto-generated method stub
         clickView(view);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
     }
 }
