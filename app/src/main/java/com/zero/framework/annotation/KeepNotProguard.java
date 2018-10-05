@@ -6,8 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Created by ZhouMeng on 2018/9/23.
  * 可配置类，方法，属性，配置后，将不会被混淆
- * Created by Zero on 2017/8/3.
  */
 
 @Retention(RetentionPolicy.CLASS)

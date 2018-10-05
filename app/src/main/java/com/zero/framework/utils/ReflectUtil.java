@@ -15,7 +15,7 @@ public class ReflectUtil {
         List<Type> needTypes = new ArrayList<>();
 
         for (Type paramType : types) {
-            /**
+            /*
              * ParameterizedType 处理多级泛型
              *
              * GenericArrayType 处理数组泛型
@@ -25,7 +25,7 @@ public class ReflectUtil {
              * WildcardType 通配符类型
              */
             if (paramType instanceof ParameterizedType) {
-                /**
+                /*
                  * getActualTypeArguments()返回表示此类型实际类型参数的 Type 对象的数组
                  *
                  * 实际就是获得超类的泛型参数的实际类型

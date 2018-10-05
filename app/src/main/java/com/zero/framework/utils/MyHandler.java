@@ -8,7 +8,8 @@ import com.zero.framework.base.BaseActivity;
 import java.lang.ref.WeakReference;
 
 /**
- * Created by apple on 2017/7/24.
+ * Created by ZhouMeng on 2018/9/24.
+ *
  */
 
 public class MyHandler extends Handler {
