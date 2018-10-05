@@ -30,7 +30,8 @@ import java.util.Map;
 import butterknife.ButterKnife;
 
 /**
- * Created by Zero on 2017/5/25.
+ * Created by ZhouMeng on 2018/9/20.
+ * activity父类
  */
 public abstract class BaseActivity<Pre extends BasePresenter> extends AppCompatActivity implements OnClickListener {
 
@@ -56,7 +57,7 @@ public abstract class BaseActivity<Pre extends BasePresenter> extends AppCompatA
         }
 
         if (initLayout() != 0) {
-            /**
+            /*
              * 设置布局，其实很多view注解框架都可以对layout抓取到，但还是习惯这样写，^_^
              */
             setContentView(initLayout());
@@ -66,11 +67,11 @@ public abstract class BaseActivity<Pre extends BasePresenter> extends AppCompatA
         try {
             if (getPsClass() != null) {
                 if (getPsClass().newInstance() instanceof BasePresenter) {
-                    /**
+                    /*
                      * presenter实例化，new和newInstance()不清晰，自己百度
                      */
                     presenter = (Pre) getPsClass().newInstance();
-                    /**
+                    /*
                      * 把一些必要的数据和presenter传过去
                      */
                     presenter.initBaseData(this, mHandler, getIView(), getIntent());
@@ -79,12 +80,12 @@ public abstract class BaseActivity<Pre extends BasePresenter> extends AppCompatA
                 }
             }
         } catch (InstantiationException e) {
-            /**
+            /*
              * 不能newInstance()导致的错误
              */
             e.printStackTrace();
         } catch (IllegalAccessException e) {
-            /**
+            /*
              * 权限不足，主要是构造方法使用了private
              */
             e.printStackTrace();
@@ -137,7 +138,7 @@ public abstract class BaseActivity<Pre extends BasePresenter> extends AppCompatA
     }
 
     /**
-     * setontentview()
+     * setContentView()
      *
      * @return
      */
@@ -307,7 +308,7 @@ public abstract class BaseActivity<Pre extends BasePresenter> extends AppCompatA
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        /**
+        /*
          * 移除mHandler，避免因为移除mHandler超activity生命周期工作造成内存泄漏
          */
         mHandler.removeCallbacksAndMessages(null);
